@@ -6,6 +6,7 @@ version: '3'
 # Перечень volume
 volumes:
   pg_data:
+  static:
 
 # Перечень контейнеров
 services:
@@ -27,12 +28,19 @@ services:
     # Какие контейнеры нужно запустить до старта этого контейнера:
     depends_on:
       - db
+    volumes:
+      - static:/backend_static
   # Имя третьего контейнера. Это контейнер с фронтендом
   frontend:
     env_file: .env
     build: ./frontend/
+    volumes:
+      - static:/frontend_static
+    command: cp -r /app/build/. /frontend_static/
   
   gateway:
     build: ./gateway/
+    volumes:
+      - static:/staticfiles/
     ports:
       - 8000:80
